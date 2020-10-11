@@ -53,7 +53,7 @@ services:
       VIRTUAL_PORT: 10772
 
       # Amatsukazeに関する情報(環境に応じて変更)
-      AMATSUKAZE_HOST: vm-win81.blckn
+      AMATSUKAZE_HOST: amatsukaze.local
       AMATSUKAZE_PATH: C:/Users/user/Documents/Amatsukaze
       AMATSUKAZE_SRC_DIR: F:/
       AMATSUKAZE_DST_DIR: G:/tmp/
