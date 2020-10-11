@@ -1,0 +1,70 @@
+version: '2'
+services:
+  # samba
+  smb:
+    build: ./samba
+    container_name: samba
+    ports:
+      - "445:445"
+      - "139:139"
+    volumes:
+      - /opt/data/recorded:/samba/share
+
+  # mirakurun
+  mirakurun:
+    build:
+      context: mirakurun
+    container_name: mirakurun
+    privileged: true
+    ports:
+      - "40772:40772"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./mirakurun/conf:/usr/local/etc/mirakurun
+      - /opt/data/mirakurun/db:/usr/local/var/db/mirakurun
+    environment:
+      TZ: Asia/Tokyo
+
+  # chinachu
+  chinachu:
+    build:
+      context: chinachu
+      args:
+        - REPOSITORY=git://github.com/Chinachu/Chinachu.git
+        - BRANCH=gamma
+    container_name: chinachu
+    ports:
+      - "10772:10772"
+      - "20772:20772"
+      - "5353:5353/udp"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./chinachu/conf/config.json:/usr/local/chinachu/config.json
+      - ./chinachu/conf/rules.json:/usr/local/chinachu/rules.json
+      - /opt/data/chinachu/data:/usr/local/chinachu/data
+      - ./chinachu/bin:/usr/local/chinachu/bin
+      - ./chinachu/Amatsukaze:/usr/local/chinachu/Amatsukaze
+      - /opt/data/recorded:/usr/local/chinachu/recorded
+    environment:
+      TZ: Asia/Tokyo
+
+      # ssl・slackスクリプトで使用(環境に応じて変更)
+      VIRTUAL_HOST: plex-chinachu.local
+      VIRTUAL_PORT: 10772
+
+      # Amatsukazeに関する情報(環境に応じて変更)
+      AMATSUKAZE_HOST: vm-win81.blckn
+      AMATSUKAZE_PATH: C:/Users/user/Documents/Amatsukaze
+      AMATSUKAZE_SRC_DIR: F:/
+      AMATSUKAZE_DST_DIR: G:/tmp/
+
+      # SlackのWebhook
+      SLACK_WEBHOOK: https://hooks.slack.com/services/hogehoge/fugafuga
+
+      # ChinachuのWebUIのID/Password(初期パスワード。ここ変えても本体側は変わらないので注意)
+      CHINACHU_USER: akari
+      CHINACHU_PASS: bakuhatsu
+
+      # ImgurのID/Password(アカウントの作成が必要)
+      IMGUR_ID: hogehoge
+      IMGUR_SECRET: fugafuga
